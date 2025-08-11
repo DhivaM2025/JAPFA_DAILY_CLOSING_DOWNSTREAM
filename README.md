@@ -1,8 +1,8 @@
 # JAPFA_DAILY_CLOSING_DOWNSTREAM
 # OBJECTIVE
 1. Ensure that all transaction are recorded within SLA in the SAP. i.e​
-   Cash reconciliation must be done within same day​
-  Bank reconciliation must be done H+1​
+   - Cash reconciliation must be done within same day​
+   - Bank reconciliation must be done H+1​
 2. Minimize backdate transaction in the SAP
 # HOW TO USE
 1. Pilih file sql yang akan digunakan
