@@ -1,3 +1,6 @@
+-- CATATAN : 
+-- 1/ Block all code lalu click Ctrl + Enter untuk run query di DBeaver
+
 -- DASHBOARD #1 : SGF SALES DOC FLOW SGF 
 
 SELECT DISTINCT
