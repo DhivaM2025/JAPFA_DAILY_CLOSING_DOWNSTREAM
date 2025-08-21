@@ -1,5 +1,6 @@
 -- CATATAN : 
 -- 1/ Block all code lalu click Ctrl + Enter untuk run query di DBeaver
+-- 2/ Ganti period pada row 93 sesuai kebutuhan >> TRY_TO_DATE(SSO.SALES_ORDER_DATE, 'YYYYMMDD') BETWEEN '2025-07-01' AND CURRENT_DATE
 
 -- DASHBOARD #1 : SGF SALES DOC FLOW SGF 
 
