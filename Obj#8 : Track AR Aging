@@ -1,0 +1,9 @@
+-- CATATAN : 
+-- 1/ Copy and paste code pada DBeaver lalu click Ctrl + Enter untuk run query
+-- 2/ Sesuaikan Source_system sesuai kebutuhan
+
+-- DASHBOARD #8: AR Aging Customer
+
+
+SELECT * FROM PROD_DB.DSTR_BI_COMMUNITY.F_FINANCE_AR_AGING_CUSTOMER 
+WHERE SOURCE_SYSTEM = 'PE1';
