@@ -2,7 +2,7 @@
 -- 1/ Block all code lalu click Ctrl + Enter untuk run query di DBeaver
 -- 2/ Ganti period pada row 105 sesuai kebutuhan >> TRY_TO_DATE(SSO.SALES_ORDER_DATE, 'YYYYMMDD') BETWEEN '2025-06-01' AND CURRENT_DATE
 
--- DASHBOARD #1 : SGF SALES CUSTOMER COD
+-- DASHBOARD #2 : SGF SALES CUSTOMER COD
 
 SELECT DISTINCT
   -- BASIC DATA
