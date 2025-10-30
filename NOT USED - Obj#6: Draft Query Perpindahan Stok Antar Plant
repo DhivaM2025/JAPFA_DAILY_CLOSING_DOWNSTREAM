@@ -1,3 +1,4 @@
+-- NOT USED --
 -- Dashboard monitor perpindahan stock antar plant
 SELECT DISTINCT
     A.PURCHASE_ORDER,
