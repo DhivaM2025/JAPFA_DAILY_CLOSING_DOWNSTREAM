@@ -52,8 +52,8 @@ SELECT DISTINCT
   END AS SALES_ORDER_STATUS,
   SSO.SALES_ORDER_STATUS_REJECTION || '-' || SSO.SALES_ORDER_STATUS_REJECTION_DESC AS SALES_ORDER_STATUS_REJECTION,
   CASE 
-  	WHEN SD.DELIVERY_STATUS = 'Not yet started' THEN 'A-Not yet started'
-    WHEN SD.DELIVERY_STATUS = 'Not yet processed' THEN 'B-Not yet processed'
+  	WHEN SD.DELIVERY_STATUS = 'Not yet processed' THEN 'A-Not yet processed'
+    WHEN SD.DELIVERY_STATUS = 'Partially processed' THEN 'B-Partially processed'
     WHEN SD.DELIVERY_STATUS = 'Completely processed' THEN 'C-Completely processed'
     ELSE SD.DELIVERY_STATUS
   END AS DELIVERY_STATUS,
