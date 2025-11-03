@@ -58,8 +58,8 @@ SELECT DISTINCT
     ELSE SD.DELIVERY_STATUS
   END AS DELIVERY_STATUS,
   CASE 
-  	WHEN SD.DELIVERY_POD_STATUS = 'Not yet started' THEN 'A-Not yet started'
-    WHEN SD.DELIVERY_POD_STATUS = 'Not yet processed' THEN 'B-Not yet processed'
+  	WHEN SD.DELIVERY_POD_STATUS = 'Not yet processed' THEN 'A-Not yet processed'
+    WHEN SD.DELIVERY_POD_STATUS = 'Partially processed' THEN 'B-Partially processed'
     WHEN SD.DELIVERY_POD_STATUS = 'Completely processed' THEN 'C-Completely processed'
     ELSE SD.DELIVERY_POD_STATUS
   END AS POD_STATUS,
