@@ -2,8 +2,12 @@ SELECT
     f.source_system,
     f.plant ||'-'|| dscap.PLANT_NAME AS PLANT_DESC,
     f.delivery_number AS DO_number,
+    f.delivery_type,
     f.COMPANY_CODE ,
-    TO_VARCHAR(TO_DATE(f.DELIVERY_ACTUAL_DATE, 'YYYYMMDD'), 'YYYYMMDD') AS delivery_date,
+     CASE 
+        WHEN f.DELIVERY_ACTUAL_DATE = '00000000' OR f.DELIVERY_ACTUAL_DATE IS NULL THEN NULL
+        ELSE TO_DATE(f.DELIVERY_ACTUAL_DATE, 'YYYYMMDD')
+    END AS actual_delivery_date,
     SUM(CASE 
             WHEN delivery_type NOT IN (
              'NCR',
@@ -59,10 +63,14 @@ SELECT
             ELSE 0 
         END) AS timbul_delivery_qty,
 FROM F_SALES_DELIVERY f
-LEFT JOIN F_SALES_DELIVERY_POD_LATEST pod
+LEFT JOIN F_SALES_DELIVERY_POD pod
 ON pod.SOURCE_SYSTEM = f.SOURCE_SYSTEM AND pod.DELIVERY_NUMBER = f.DELIVERY_NUMBER AND pod.DELIVERY_ITEM = f.DELIVERY_ITEM
-LEFT JOIN D_SCM_COMPANY_AND_PLANT dscap 
-ON dscap.COMPANY_CODE = f.COMPANY_CODE AND dscap.PLANT = f.PLANT
-WHERE DELIVERY_DATE BETWEEN '20250919' AND '20251002' AND f.SOURCE_SYSTEM = 'PE1' AND f.COMPANY_CODE = 'ID90'
-GROUP BY f.source_system, f.company_code, delivery_date, PLANT_DESC, DO_number
-ORDER BY f.SOURCE_SYSTEM DESC, delivery_date DESC ;
+LEFT JOIN (
+    SELECT DISTINCT PLANT, PLANT_NAME, COMPANY_CODE
+    FROM D_SCM_COMPANY_AND_PLANT
+) dscap
+    ON dscap.COMPANY_CODE = f.COMPANY_CODE 
+    AND dscap.PLANT = f.PLANT
+WHERE ACTUAL_DELIVERY_DATE BETWEEN '2025-09-19' AND '2025-11-03' AND f.SOURCE_SYSTEM = 'PE1' AND f.COMPANY_CODE = 'ID90'
+GROUP BY f.source_system, f.company_code, actual_delivery_date, f.PLANT, dscap.PLANT_NAME, DO_number, f.delivery_type
+ORDER BY f.SOURCE_SYSTEM DESC, actual_delivery_date DESC ;
