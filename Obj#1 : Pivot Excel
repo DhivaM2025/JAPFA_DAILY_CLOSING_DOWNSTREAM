@@ -1,0 +1,72 @@
+# Count SO Number
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    TRIM(Query1[SO_NUMBER]) <> "";
+    NOT ISBLANK(Query1[SO_NUMBER])
+)
+
+# Count SO Number yang DO Number Not Blank
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    NOT ISBLANK(Query1[DO_NUMBER]);
+    TRIM(Query1[DO_NUMBER]) <> ""
+)
+
+# Count SO Number yang GI Number Not Blank
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    NOT ISBLANK(Query1[GI_NUMBER]);
+    TRIM(Query1[GI_NUMBER]) <> ""
+)
+
+# Count SO Number yang sudah konfirmasi POD
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    NOT ISBLANK(Query1[GI_NUMBER]);
+    TRIM(Query1[GI_NUMBER]) <> "";
+    Query1[POD_STATUS] = "C-Completely processed"
+)
+
+# Count SO Number yang Billing Number Not Blank
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[POD_STATUS] = "C-Completely processed";
+    NOT ISBLANK(Query1[BILL_NUMBER]);
+    TRIM(Query1[BILL_NUMBER]) <> ""
+)
+
+# Count SO Number yang TF/TG Number Not Blank
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[POD_STATUS] = "C-Completely processed";
+    NOT ISBLANK(Query1[BILL_NUMBER]);
+    TRIM(Query1[BILL_NUMBER]) <> "";
+    NOT ISBLANK(Query1[TFTG_NUMBER]);
+    TRIM(Query1[TFTG_NUMBER]) <> ""
+)
+
+# Count SO Number yang Billing Number Not Blank
+=CALCULATE(
+    DISTINCTCOUNT(Query1[SO_NUMBER]);
+    Query1[CATEGORY] = "Non Interco";
+    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[POD_STATUS] = "C-Completely processed";
+    NOT ISBLANK(Query1[BILL_NUMBER]);
+    TRIM(Query1[BILL_NUMBER]) <> "";
+    NOT ISBLANK(Query1[TFTG_NUMBER]);
+    TRIM(Query1[TFTG_NUMBER]) <> "";
+    NOT ISBLANK(Query1[BILL_CLEARING_NUMBER]);
+    TRIM(Query1[BILL_CLEARING_NUMBER]) <> ""
+)
