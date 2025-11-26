@@ -2,16 +2,16 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
-    TRIM(Query1[SO_NUMBER]) <> "";
-    NOT ISBLANK(Query1[SO_NUMBER])
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
+    NOT ISBLANK(Query1[SO_NUMBER]);
+    TRIM(Query1[SO_NUMBER]) <> ""
 )
 
 # Count SO Number yang DO Number Not Blank
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     NOT ISBLANK(Query1[DO_NUMBER]);
     TRIM(Query1[DO_NUMBER]) <> ""
 )
@@ -20,7 +20,7 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     NOT ISBLANK(Query1[GI_NUMBER]);
     TRIM(Query1[GI_NUMBER]) <> ""
 )
@@ -29,7 +29,7 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     NOT ISBLANK(Query1[GI_NUMBER]);
     TRIM(Query1[GI_NUMBER]) <> "";
     Query1[POD_STATUS] = "C-Completely processed"
@@ -39,7 +39,7 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     Query1[POD_STATUS] = "C-Completely processed";
     NOT ISBLANK(Query1[BILL_NUMBER]);
     TRIM(Query1[BILL_NUMBER]) <> ""
@@ -49,7 +49,7 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     Query1[POD_STATUS] = "C-Completely processed";
     NOT ISBLANK(Query1[BILL_NUMBER]);
     TRIM(Query1[BILL_NUMBER]) <> "";
@@ -61,7 +61,7 @@
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
     Query1[CATEGORY] = "Non Interco";
-    ISBLANK(Query1[DELIVERY_NOTE]) || TRIM(Query1[DELIVERY_NOTE]) = "";
+    Query1[REASON_DELIVERY_NOTE_FLAG] = FALSE();
     Query1[POD_STATUS] = "C-Completely processed";
     NOT ISBLANK(Query1[BILL_NUMBER]);
     TRIM(Query1[BILL_NUMBER]) <> "";
