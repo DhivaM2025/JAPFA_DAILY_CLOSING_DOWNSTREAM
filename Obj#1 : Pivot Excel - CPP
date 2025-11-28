@@ -1,5 +1,6 @@
 -- PIVOT EXCEL TRX INTERCO B2B&B2C --
 
+-- INTERCO MT --
 # Count SO
 =CALCULATE(
     DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
@@ -33,5 +34,60 @@ CALCULATE(
     )
 )
 
+-- INTERCO FS --
+# Count SO
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[SO_FRA_NUMBER]);
+    TRIM(Query3[SO_FRA_NUMBER]) <> ""
+)
+
+# Count DO Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[DO_FRA_NUMBER]);
+    TRIM(Query3[DO_FRA_NUMBER]) <> ""
+)
+
+# Count GI Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[GI_FRA_NUMBER]);
+    TRIM(Query3[GI_FRA_NUMBER]) <> ""
+)
+
+# Count Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[GI_FRA_NUMBER]);
+    TRIM(Query3[GI_FRA_NUMBER]) <> "";
+        (
+        Query3[POD_STATUS] = "C-Completely processed"
+        || ISBLANK(Query3[POD_STATUS])
+        || TRIM(Query3[POD_STATUS]) <> ""
+    )
+)
+
 # Count TF/TG
+=CALCULATE(
+    DISTINCTCOUNT('Query3'[SO_FRA_NUMBER]);
+ (
+        Query3[POD_STATUS] = "C-Completely processed"
+        || ISBLANK(Query3[POD_STATUS])
+        || TRIM(Query3[POD_STATUS]) <> ""
+    );
+    NOT ISBLANK(Query3[TFTG_NUMBER]);
+    TRIM(Query3[TFTG_NUMBER]) <> ""
+)
+
 # Count Billing Clearing
+==CALCULATE(
+    DISTINCTCOUNT('Query3'[SO_FRA_NUMBER]);
+ (
+        Query3[POD_STATUS] = "C-Completely processed"
+        || ISBLANK(Query3[POD_STATUS])
+        || TRIM(Query3[POD_STATUS]) <> ""
+    );
+    NOT ISBLANK(Query3[BILL_CLEARING_NUMBER]);
+    TRIM(Query3[BILL_CLEARING_NUMBER]]) <> ""
+)
