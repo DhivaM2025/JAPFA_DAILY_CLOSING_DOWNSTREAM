@@ -1,0 +1,37 @@
+-- PIVOT EXCEL TRX INTERCO B2B&B2C --
+
+# Count SO
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[SO_FRA_NUMBER]);
+    TRIM(Query3[SO_FRA_NUMBER]) <> ""
+)
+
+# Count DO Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[DO_CSGMNT_NUMBER]);
+    TRIM(Query3[DO_CSGMNT_NUMBER]) <> ""
+)
+
+# Count GI Cons
+CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[GI_CSGMNT_NUMBER]);
+    TRIM(Query3[GI_CSGMNT_NUMBER]) <> ""
+)
+
+# Count Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query3[SO_FRA_NUMBER]);
+    NOT ISBLANK(Query3[GI_CSGMNT_NUMBER]);
+    TRIM(Query3[GI_CSGMNT_NUMBER]) <> "";
+        (
+        Query3[POD_STATUS] = "C-Completely processed"
+        || ISBLANK(Query3[POD_STATUS])
+        || TRIM(Query3[POD_STATUS]) <> ""
+    )
+)
+
+# Count TF/TG
+# Count Billing Clearing
