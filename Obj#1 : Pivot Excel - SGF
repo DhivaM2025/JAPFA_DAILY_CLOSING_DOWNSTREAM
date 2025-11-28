@@ -16,7 +16,6 @@
 # Count SO Number yang GI Number Not Blank
 =CALCULATE(
     DISTINCTCOUNT(Query1[SO_NUMBER]);
-    ISBLANK(Query1[REASON_POD]) || TRIM(Query1[REASON_POD]) = "";
     NOT ISBLANK(Query1[GI_NUMBER]);
     TRIM(Query1[GI_NUMBER]) <> ""
 )
