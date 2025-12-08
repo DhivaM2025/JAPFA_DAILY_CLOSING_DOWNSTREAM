@@ -1,0 +1,86 @@
+# INTERCO MT - SALES DOC FLOW
+# Count SO Number
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[SO_NUMBER]);
+    TRIM(Query2[SO_NUMBER]) <> ""
+)
+
+# Count SO to DO Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[DO_CSGMNT_NUMBER]);
+    TRIM(Query2[DO_CSGMNT_NUMBER]) <> ""
+)
+
+# Count SO to GI Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> ""
+)
+
+# Count SO to POD Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> "";
+    Query2[POD_STATUS] = "C-Completely processed"
+)
+
+# Count SO to Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> "";
+    Query2[POD_STATUS] = "C-Completely processed";
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> ""
+)
+
+# INTERCO MT - DELTA DATA
+# Delta SO SGF to SO External Doc (SO CPP)
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[SO_NUMBER]);
+    TRIM(Query2[SO_NUMBER]) <> "";
+        (
+            ISBLANK(Query2[SALES_ORDER_REFERENCE]) 
+            || TRIM(Query2[SALES_ORDER_REFERENCE]) = ""
+        )
+)
+
+# Delta SO to DO Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    ISBLANK(Query2[DO_CSGMNT_NUMBER]);
+    TRIM(Query2[DO_CSGMNT_NUMBER]) = ""
+)
+
+# Delta DO Cons to GI Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[DO_CSGMNT_NUMBER]);
+    TRIM(Query2[DO_CSGMNT_NUMBER]) <> "";
+    ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) = ""
+)
+
+# Delta GI Cons to POD Cons
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> "";
+    Query2[POD_STATUS] <> "C-Completely processed"
+)
+
+# Delta POD Cons to Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> "";
+    Query2[POD_STATUS] = "C-Completely processed";
+    ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) = ""
+)
+
