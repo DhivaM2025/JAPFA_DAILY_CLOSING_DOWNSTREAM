@@ -1,0 +1,145 @@
+# INTERCO FS - SALES DOC FLOW
+# Count SO Number
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[SO_NUMBER]);
+    TRIM(Query2[SO_NUMBER]) <> ""
+)
+
+# Count SO to DO
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[DO_NUMBER]);
+    TRIM(Query2[DO_NUMBER]) <> ""
+)
+
+# Count SO to GI
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_NUMBER]);
+    TRIM(Query2[GI_NUMBER]) <> ""
+)
+
+# Count SO to POD
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_NUMBER]);
+    TRIM(Query2[GI_NUMBER]) <> "";
+    Query2[POD_STATUS] = "C-Completely processed"
+)
+
+# Count SO to Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_NUMBER]);
+    TRIM(Query2[GI_NUMBER]) <> "";
+        (
+            Query2[POD_STATUS] = "C-Completely processed"
+            || ISBLANK(Query2[POD_STATUS])
+            || TRIM(Query2[POD_STATUS]) <> ""
+        );
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> ""
+)
+
+# Count SO to TF/TG
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+        (
+            Query2[POD_STATUS] = "C-Completely processed"
+            || ISBLANK(Query2[POD_STATUS])
+            || TRIM(Query2[POD_STATUS]) <> ""
+        );
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> "";
+    NOT ISBLANK(Query2[TFTG_NUMBER]);
+    TRIM(Query2[TFTG_NUMBER]) <> ""
+)
+
+# Count SO to Billing Clearing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+        (
+            Query2[POD_STATUS] = "C-Completely processed"
+            || ISBLANK(Query2[POD_STATUS])
+            || TRIM(Query2[POD_STATUS]) <> ""
+        );
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> "";
+    NOT ISBLANK(Query2[BILL_CLEARING_NUMBER]);
+    TRIM(Query2[BILL_CLEARING_NUMBER]) <> ""
+)
+
+# INTERCO MT - DELTA DATA
+# Delta SO SGF to SO External Doc (SO CPP)
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[SO_NUMBER]);
+    TRIM(Query2[SO_NUMBER]) <> "";
+    ISBLANK(Query2[DO_NUMBER]);
+    TRIM(Query2[DO_NUMBER]) = ""
+)
+
+# Delta SO to DO 
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[SO_NUMBER]);
+    TRIM(Query2[SO_NUMBER]) <> "";
+    ISBLANK(Query2[DO_NUMBER]);
+    TRIM(Query2[DO_NUMBER]) = ""
+)
+
+# Delta DO to GI
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[DO_NUMBER]);
+    TRIM(Query2[DO_NUMBER]) <> "";
+    ISBLANK(Query2[GI_NUMBER]);
+    TRIM(Query2[GI_NUMBER]) = ""
+)
+
+# Delta GI to POD
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_NUMBER]);
+    TRIM(Query2[GI_NUMBER]) <> "";
+    Query2[POD_STATUS] <> "C-Completely processed"
+)
+
+# Delta POD to Billing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[GI_CSGMNT_NUMBER]);
+    TRIM(Query2[GI_CSGMNT_NUMBER]) <> "";
+    Query2[POD_STATUS] = "C-Completely processed";
+    ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) = ""
+)
+
+# Delta Billing to TF/TG
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> "";
+        (
+            Query2[POD_STATUS] = "C-Completely processed"
+            || ISBLANK(Query2[POD_STATUS])
+            || TRIM(Query2[POD_STATUS]) <> ""
+        );
+    ISBLANK(Query2[TFTG_NUMBER]);
+    TRIM(Query2[TFTG_NUMBER]) = ""
+)
+
+# Delta Billing to Billing Clearing
+=CALCULATE(
+    DISTINCTCOUNT(Query2[SO_NUMBER]);
+    NOT ISBLANK(Query2[BILL_NUMBER]);
+    TRIM(Query2[BILL_NUMBER]) <> "";
+        (
+            Query2[POD_STATUS] = "C-Completely processed"
+            || ISBLANK(Query2[POD_STATUS])
+            || TRIM(Query2[POD_STATUS]) <> ""
+        );
+    ISBLANK(Query2[BILL_CLEARING_NUMBER]);
+    TRIM(Query2[BILL_CLEARING_NUMBER]) = ""
+)
