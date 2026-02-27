@@ -1,0 +1,36 @@
+PROSES 2 : SETELAH SORT DATA & REMOVE DUPLICATES SELESAI MAKA REFRESH PIVOT
+
+Versi 1 — Refresh Semua Pivot di Sheet Aktif
+--------------------------------------------------------------------------------------------------------------------------------
+Sub Refresh_All_Pivot_In_ActiveSheet()
+
+    Dim pt As PivotTable
+    
+    For Each pt In ActiveSheet.PivotTables
+        pt.RefreshTable
+    Next pt
+    
+    MsgBox "Semua Pivot di sheet ini sudah di-refresh!"
+
+End Sub
+--------------------------------------------------------------------------------------------------------------------------------
+
+Versi 2 — Refresh Pivot di Sheet Tertentu (Lebih Aman)
+👉 Misalnya sheet kamu namanya: Dashboard Sales
+--------------------------------------------------------------------------------------------------------------------------------
+Sub Refresh_Pivot_Specific_Sheet()
+
+    Dim ws As Worksheet
+    Dim pt As PivotTable
+    
+    Set ws = ThisWorkbook.Sheets("Dashboard Sales")
+    
+    For Each pt In ws.PivotTables
+        pt.RefreshTable
+    Next pt
+    
+    MsgBox "Pivot di Dashboard Sales sudah di-refresh!"
+
+End Sub
+--------------------------------------------------------------------------------------------------------------------------------
+👉 Ganti "Dashboard Sales" sesuai nama sheet kamu
