@@ -1,0 +1,58 @@
+PROSES 1 : SORT DATA & REMOVE DUPLICATES
+
+Sub Multi_Sort_SO_Data()
+
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim lastCol As Long
+    
+    Dim col1 As Long, col2 As Long, col3 As Long
+    Dim col4 As Long, col5 As Long, col6 As Long
+    Dim col7 As Long, col8 As Long
+    
+    Set ws = ActiveSheet
+    
+    'Cari baris & kolom terakhir
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+    
+    'Match header
+    col1 = Application.Match("SALES_ORDER_STATUS_REJECTION", ws.Rows(1), 0)
+    col2 = Application.Match("SALES_ORDER_REASON_REJECTION_DESC", ws.Rows(1), 0)
+    col3 = Application.Match("SO_NUMBER", ws.Rows(1), 0)
+    col4 = Application.Match("DO_NUMBER", ws.Rows(1), 0)
+    col5 = Application.Match("GI_NUMBER", ws.Rows(1), 0)
+    col6 = Application.Match("BILL_NUMBER", ws.Rows(1), 0)
+    col7 = Application.Match("TFTG_NUMBER", ws.Rows(1), 0)
+    col8 = Application.Match("BILL_CLEARING_NUMBER", ws.Rows(1), 0)
+    
+    'Clear sort lama
+    ws.Sort.SortFields.Clear
+    
+    'Tambah sorting sesuai urutan prioritas
+    ws.Sort.SortFields.Add Key:=ws.Columns(col1), Order:=xlAscending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col2), Order:=xlAscending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col3), Order:=xlAscending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col4), Order:=xlDescending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col5), Order:=xlDescending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col6), Order:=xlDescending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col7), Order:=xlAscending
+    ws.Sort.SortFields.Add Key:=ws.Columns(col8), Order:=xlAscending
+    
+    'Apply sort
+    With ws.Sort
+        .SetRange ws.Range(ws.Cells(1, 1), ws.Cells(lastRow, lastCol))
+        .Header = xlYes
+        .Apply
+    End With
+    
+    'Update lastRow lagi setelah sort
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    'Remove duplicate berdasarkan SO_NUMBER saja
+    ws.Range(ws.Cells(1, 1), ws.Cells(lastRow, lastCol)).RemoveDuplicates _
+        Columns:=Array(col3), Header:=xlYes
+
+    MsgBox "Sorting & Remove Duplicate SO_NUMBER selesai!"
+
+End Sub
