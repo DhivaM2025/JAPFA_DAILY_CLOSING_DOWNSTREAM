@@ -23,7 +23,7 @@ Sub Refresh_Pivot_Specific_Sheet()
     Dim ws As Worksheet
     Dim pt As PivotTable
     
-    Set ws = ThisWorkbook.Sheets("Dashboard Sales")
+    Set ws = ActiveWorkbook.Sheets("Sales Flow")
     
     For Each pt In ws.PivotTables
         pt.RefreshTable
