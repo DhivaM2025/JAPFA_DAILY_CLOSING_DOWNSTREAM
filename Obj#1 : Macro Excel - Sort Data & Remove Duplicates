@@ -1,4 +1,4 @@
-PROSES 1 : SORT DATA & REMOVE DUPLICATES
+PROSES 1 : SORT DATA & REMOVE DUPLICATES - NON INTERCO
 
 Sub Multi_Sort_SO_Data()
 
@@ -54,5 +54,86 @@ Sub Multi_Sort_SO_Data()
         Columns:=Array(col3), Header:=xlYes
 
     MsgBox "Sorting & Remove Duplicate SO_NUMBER selesai!"
+
+End Sub
+
+PROSES 1 : SORT DATA & REMOVE DUPLICATES - INTERCO JFI
+Sub Multi_Sort_SO_Data()
+
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim lastCol As Long
+    
+    Dim c1 As Variant, c2 As Variant, c3 As Variant
+    Dim c4 As Variant, c5 As Variant, c6 As Variant
+    Dim c7 As Variant, c8 As Variant, c9 As Variant
+    Dim c10 As Variant, c11 As Variant, c12 As Variant
+    Dim c13 As Variant, c14 As Variant, c15 As Variant
+    Dim c16 As Variant, c17 As Variant, c18 As Variant
+    
+    Set ws = ActiveSheet   'Ganti ke Sheets("NamaSheet") jika perlu
+    
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+    
+    'Match header
+    c1 = Application.Match("SALES_ORDER_STATUS_REJECTION", ws.Rows(1), 0)
+    c2 = Application.Match("SALES_ORDER_REASON_REJECTION_DESC", ws.Rows(1), 0)
+    c3 = Application.Match("SALES_ORDER_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c4 = Application.Match("DELIVERY_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c5 = Application.Match("GI_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c6 = Application.Match("BILLING_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c7 = Application.Match("TF_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c8 = Application.Match("BILLING_CLEARING_NUMBER_CUSTOMER", ws.Rows(1), 0)
+    c9 = Application.Match("INVOICE_NUMBER", ws.Rows(1), 0)
+    c10 = Application.Match("SALES_ORDER_NUMBER_INTERCO", ws.Rows(1), 0)
+    c11 = Application.Match("DELIVERY_NUMBER_INTERCO", ws.Rows(1), 0)
+    c12 = Application.Match("GI_NUMBER_INTERCO", ws.Rows(1), 0)
+    c13 = Application.Match("SALES_ORDER_CONS_NUMBER", ws.Rows(1), 0)
+    c14 = Application.Match("DELIVERY_CONS_NUMBER", ws.Rows(1), 0)
+    c15 = Application.Match("GI_CONS_NUMBER", ws.Rows(1), 0)
+    c16 = Application.Match("BILLING_NUMBER_INTERCO", ws.Rows(1), 0)
+    c17 = Application.Match("TF_NUMBER_INTERCO", ws.Rows(1), 0)
+    c18 = Application.Match("BILLING_CLEARING_NUMBER_INTERCO", ws.Rows(1), 0)
+    
+    If IsError(c3) Then
+        MsgBox "Kolom SALES_ORDER_NUMBER_CUSTOMER tidak ditemukan!", vbCritical
+        Exit Sub
+    End If
+    
+    ws.Sort.SortFields.Clear
+    
+    '=== URUTAN SORT SESUAI PERMINTAAN ===
+    
+    ws.Sort.SortFields.Add ws.Columns(c1), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c2), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c3), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c4), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c5), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c6), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c7), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c8), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c9), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c10), xlAscending
+    ws.Sort.SortFields.Add ws.Columns(c11), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c12), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c13), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c14), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c15), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c16), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c17), xlDescending
+    ws.Sort.SortFields.Add ws.Columns(c18), xlDescending
+    
+    With ws.Sort
+        .SetRange ws.Range(ws.Cells(1, 1), ws.Cells(lastRow, lastCol))
+        .Header = xlYes
+        .Apply
+    End With
+    
+    'Remove duplicate berdasarkan SALES_ORDER_NUMBER_CUSTOMER saja
+    ws.Range(ws.Cells(1, 1), ws.Cells(lastRow, lastCol)).RemoveDuplicates _
+        Columns:=Array(c3), Header:=xlYes
+    
+    MsgBox "Sort selesai & duplicate SALES_ORDER_NUMBER_CUSTOMER sudah dihapus!", vbInformation
 
 End Sub
