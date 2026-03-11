@@ -1,0 +1,77 @@
+SELECT 
+    f.source_system,
+    f.plant ||'-'|| dscap.PLANT_NAME AS PLANT_DESC,
+    f.delivery_number AS DO_number,
+    f.COMPANY_CODE ,
+     CASE 
+        WHEN f.DELIVERY_ACTUAL_DATE = '00000000' OR f.DELIVERY_ACTUAL_DATE IS NULL THEN NULL
+        ELSE TO_DATE(f.DELIVERY_ACTUAL_DATE, 'YYYYMMDD')
+    END AS actual_delivery_date,
+    SUM(CASE 
+            WHEN delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) 
+            THEN delivery_quantity_in_kg 
+            ELSE 0 
+        END) AS total_delivery_qty,
+    SUM(CASE 
+            WHEN delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND f.DELIVERY_STATUS = 'Completely processed'
+            THEN delivery_quantity_in_kg 
+            ELSE 0 
+        END) AS Completed_delivery_qty,
+    SUM(CASE 
+            WHEN delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND f.DELIVERY_STATUS = 'Not yet processed'
+            THEN delivery_quantity_in_kg 
+            ELSE 0 
+        END) AS NOT_yet_delivery_qty,
+    SUM(CASE 
+            WHEN delivery_type IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) 
+            THEN delivery_quantity_in_kg 
+            ELSE 0 
+        END) AS return_qty,
+     SUM(CASE 
+            WHEN delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND pod.POD_REASON = 'DFG2'
+            THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM   
+            ELSE 0 
+        END) AS susut_delivery_qty,
+      SUM(CASE 
+            WHEN delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND pod.POD_REASON = 'DFG1'
+            THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM   
+            ELSE 0 
+        END) AS timbul_delivery_qty,
+FROM F_SALES_DELIVERY f
+LEFT JOIN F_SALES_DELIVERY_POD pod
+ON pod.SOURCE_SYSTEM = f.SOURCE_SYSTEM AND pod.DELIVERY_NUMBER = f.DELIVERY_NUMBER AND pod.DELIVERY_ITEM = f.DELIVERY_ITEM
+LEFT JOIN (
+    SELECT DISTINCT PLANT, PLANT_NAME, COMPANY_CODE
+    FROM D_SCM_COMPANY_AND_PLANT
+) dscap
+    ON dscap.COMPANY_CODE = f.COMPANY_CODE 
+    AND dscap.PLANT = f.PLANT
+WHERE ACTUAL_DELIVERY_DATE BETWEEN '2025-09-19' AND '2025-11-03' AND f.SOURCE_SYSTEM = 'PE1' AND f.COMPANY_CODE = 'ID90'
+AND DO_NUMBER = '3207686288'
+GROUP BY f.source_system, f.company_code, actual_delivery_date, f.PLANT, dscap.PLANT_NAME, DO_number
+ORDER BY f.SOURCE_SYSTEM DESC, actual_delivery_date DESC ;
+ 
