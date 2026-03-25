@@ -1,66 +1,195 @@
+WITH ALL_DELIVERY AS (
 SELECT 
     f.source_system,
     f.plant ||'-'|| dscap.PLANT_NAME AS PLANT_DESC,
     f.delivery_number AS DO_number,
+    f.delivery_type,
+    f.delivery_type_desc,
     f.COMPANY_CODE ,
      CASE 
         WHEN f.DELIVERY_ACTUAL_DATE = '00000000' OR f.DELIVERY_ACTUAL_DATE IS NULL THEN NULL
         ELSE TO_DATE(f.DELIVERY_ACTUAL_DATE, 'YYYYMMDD')
     END AS actual_delivery_date,
+    f.base_uom,
+    ---------- Delivery_QTY
     SUM(CASE 
-            WHEN delivery_type NOT IN (
+            WHEN f.delivery_type NOT IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) 
             THEN delivery_quantity_in_kg 
             ELSE 0 
-        END) AS total_delivery_qty,
+        END) AS total_delivery_qty_in_kg,
+
     SUM(CASE 
-            WHEN delivery_type NOT IN (
+            WHEN f.delivery_type NOT IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) 
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM
+            ELSE 0 
+        END) AS total_delivery_qty_in_base_uom,
+
+    SUM(CASE 
+        WHEN f.delivery_type NOT IN (
+            'NCR','ZB51','ZB54','ZB55',
+            'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+        ) 
+        THEN DELIVERY_QUANTITY_IN_BASE_UOM * delivery_price.PRICE
+        ELSE 0 
+    END) AS total_delivery_amount,
+
+    ---------- Completed_Delivery_QTY
+    SUM(CASE 
+            WHEN f.delivery_type NOT IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) AND f.DELIVERY_STATUS = 'Completely processed'
             THEN delivery_quantity_in_kg 
             ELSE 0 
-        END) AS Completed_delivery_qty,
+        END) AS completed_delivery_qty_in_kg,
+
     SUM(CASE 
-            WHEN delivery_type NOT IN (
+            WHEN f.delivery_type NOT IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND f.DELIVERY_STATUS = 'Completely processed'
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM
+            ELSE 0 
+        END) AS completed_delivery_qty_in_base_uom,
+
+    SUM(CASE 
+        WHEN f.delivery_type NOT IN (
+            'NCR','ZB51','ZB54','ZB55',
+            'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+        ) AND f.DELIVERY_STATUS = 'Completely processed'
+        THEN DELIVERY_QUANTITY_IN_BASE_UOM * delivery_price.PRICE
+        ELSE 0 
+    END) AS completed_delivery_amount,
+
+    --------- Not yet delivery QTY
+    SUM(CASE 
+            WHEN f.delivery_type NOT IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) AND f.DELIVERY_STATUS = 'Not yet processed'
             THEN delivery_quantity_in_kg 
             ELSE 0 
-        END) AS NOT_yet_delivery_qty,
+        END) AS not_yet_delivery_qty_in_kg,
+
     SUM(CASE 
-            WHEN delivery_type IN (
+            WHEN f.delivery_type NOT IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND f.DELIVERY_STATUS = 'Not yet processed'
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM
+            ELSE 0 
+        END) AS not_yet_delivery_qty_in_base_uom,
+
+    SUM(CASE 
+            WHEN f.delivery_type NOT IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND f.DELIVERY_STATUS = 'Not yet processed'
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM * delivery_price.PRICE
+            ELSE 0 
+        END) AS not_yet_delivery_amount,
+
+    --------- Return QTY    
+    SUM(CASE 
+            WHEN f.delivery_type IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) 
             THEN delivery_quantity_in_kg 
             ELSE 0 
-        END) AS return_qty,
+        END) AS return_qty_in_kg,
+
+    SUM(CASE 
+            WHEN f.delivery_type IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) 
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM
+            ELSE 0 
+        END) AS return_qty_in_base_uom,
+
+    SUM(CASE 
+            WHEN f.delivery_type IN (
+             'NCR','ZB51','ZB54','ZB55',
+             'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) 
+            THEN DELIVERY_QUANTITY_IN_BASE_UOM * delivery_price.PRICE
+            ELSE 0 
+        END) AS return_amount,
+
+    ----------- susut
+
+    SUM(CASE 
+            WHEN f.delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND pod.POD_REASON = 'DFG2'
+            THEN pod.DIFF_POD_QUANTITY_IN_KG   
+            ELSE 0 
+        END) AS susut_delivery_qty__IN_KG,
+
      SUM(CASE 
-            WHEN delivery_type NOT IN (
+            WHEN f.delivery_type NOT IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) AND pod.POD_REASON = 'DFG2'
             THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM   
             ELSE 0 
-        END) AS susut_delivery_qty,
-      SUM(CASE 
-            WHEN delivery_type NOT IN (
+        END) AS susut_delivery_qty__IN_BASE_UOM,
+
+        SUM(CASE 
+        WHEN f.delivery_type NOT IN (
+            'NCR',
+            'ZB51','ZB54','ZB55',
+            'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+        ) AND pod.POD_REASON = 'DFG2'
+        THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM * delivery_price.PRICE   
+        ELSE 0 
+    END) AS susut_delivery_amount,    
+
+    ----------- timbul
+    SUM(CASE 
+            WHEN f.delivery_type NOT IN (
+             'NCR',
+                'ZB51','ZB54','ZB55',
+                'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+            ) AND pod.POD_REASON = 'DFG1'
+            THEN pod.DIFF_POD_QUANTITY_IN_KG   
+            ELSE 0 
+        END) AS timbul_delivery_qty_in_kg,
+
+     SUM(CASE 
+            WHEN f.delivery_type NOT IN (
              'NCR',
                 'ZB51','ZB54','ZB55',
                 'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
             ) AND pod.POD_REASON = 'DFG1'
             THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM   
             ELSE 0 
-        END) AS timbul_delivery_qty,
+        END) AS timbul_delivery_qty_in_base_uom,
+
+    SUM(CASE 
+        WHEN f.delivery_type NOT IN (
+            'NCR',
+            'ZB51','ZB54','ZB55',
+            'ZKR1','ZKR2','ZKR3','ZKR5','ZKRA','ZKRC'
+        ) AND pod.POD_REASON = 'DFG1'
+        THEN pod.DIFF_POD_QUANTITY_IN_BASE_UOM * delivery_price.PRICE   
+        ELSE 0 
+    END) AS timbul_delivery_amount
+
 FROM F_SALES_DELIVERY f
 LEFT JOIN F_SALES_DELIVERY_POD pod
 ON pod.SOURCE_SYSTEM = f.SOURCE_SYSTEM AND pod.DELIVERY_NUMBER = f.DELIVERY_NUMBER AND pod.DELIVERY_ITEM = f.DELIVERY_ITEM
@@ -70,8 +199,55 @@ LEFT JOIN (
 ) dscap
     ON dscap.COMPANY_CODE = f.COMPANY_CODE 
     AND dscap.PLANT = f.PLANT
-WHERE ACTUAL_DELIVERY_DATE BETWEEN '2025-09-19' AND '2025-11-03' AND f.SOURCE_SYSTEM = 'PE1' AND f.COMPANY_CODE = 'ID90'
-AND DO_NUMBER = '3207686288'
-GROUP BY f.source_system, f.company_code, actual_delivery_date, f.PLANT, dscap.PLANT_NAME, DO_number
-ORDER BY f.SOURCE_SYSTEM DESC, actual_delivery_date DESC ;
- 
+LEFT JOIN (
+    SELECT 
+        sd.source_system, 
+        sd.DELIVERY_NUMBER,
+        sd.DELIVERY_ITEM,
+        sd.DELIVERY_QUANTITY_IN_BASE_UOM as delqty,
+        sd.DELIVERY_TYPE ,
+        so.SALES_ORDER_NET_AMOUNT,
+        sum(ROUND(COALESCE(so.SALES_ORDER_NET_AMOUNT / NULLIF(sd.DELIVERY_QUANTITY_IN_BASE_UOM,0),0),2)) AS PRICE
+    FROM F_SALES_DELIVERY sd
+    LEFT JOIN F_SALES_SALES_ORDER so 
+        ON sd.SOURCE_SYSTEM = so.SOURCE_SYSTEM 
+        AND sd.REFERENCE_SALES_ORDER_NUMBER = so.SALES_ORDER_NUMBER 
+        AND sd.REFERENCE_SALES_ORDER_ITEM = so.SALES_ORDER_ITEM
+    GROUP BY ALL 
+) delivery_price
+    ON delivery_price.source_system = f.SOURCE_SYSTEM 
+    AND delivery_price.DELIVERY_NUMBER = f.DELIVERY_NUMBER 
+    AND delivery_price.DELIVERY_ITEM = f.DELIVERY_ITEM
+GROUP BY f.source_system, f.company_code, actual_delivery_date, f.PLANT, dscap.PLANT_NAME, DO_number, f.base_uom, f.DELIVERY_TYPE, f.DELIVERY_TYPE_DESC
+ORDER BY f.SOURCE_SYSTEM DESC, actual_delivery_date DESC 
+) SELECT  
+	SOURCE_SYSTEM,
+	PLANT_DESC, 
+	DO_NUMBER, 
+	DELIVERY_TYPE,
+	DELIVERY_TYPE_DESC,
+	COMPANY_CODE, 
+	ACTUAL_DELIVERY_DATE, 
+	BASE_UOM,
+	ROUND(COALESCE(TOTAL_DELIVERY_AMOUNT/NULLIF(TOTAL_DELIVERY_QTY_IN_BASE_UOM,0),0),2) AS SO_PRICE,
+	TOTAL_DELIVERY_QTY_IN_KG, 
+	TOTAL_DELIVERY_QTY_IN_BASE_UOM,
+	TOTAL_DELIVERY_AMOUNT,
+	COMPLETED_DELIVERY_QTY_IN_KG,
+	COMPLETED_DELIVERY_QTY_IN_BASE_UOM,
+	COMPLETED_DELIVERY_AMOUNT,
+	NOT_YET_DELIVERY_QTY_IN_KG,
+	NOT_YET_DELIVERY_QTY_IN_BASE_UOM,
+	NOT_YET_DELIVERY_AMOUNT,
+	RETURN_QTY_IN_KG,
+	RETURN_QTY_IN_BASE_UOM,
+	RETURN_AMOUNT,
+	SUSUT_DELIVERY_QTY__IN_KG,
+	SUSUT_DELIVERY_QTY__IN_BASE_UOM,
+	SUSUT_DELIVERY_AMOUNT,
+	TIMBUL_DELIVERY_QTY_IN_KG,
+	TIMBUL_DELIVERY_QTY_IN_BASE_UOM,
+	TIMBUL_DELIVERY_AMOUNT
+FROM ALL_DELIVERY
+WHERE ACTUAL_DELIVERY_DATE BETWEEN '2025-09-19' AND '2025-11-03' AND SOURCE_SYSTEM = 'PE1' AND COMPANY_CODE = 'ID90'
+;
