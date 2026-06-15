@@ -109,8 +109,7 @@ SELECT
 	CUSTSH.CUSTOMER_NAME AS CUSTOMER_SHIP_TO_NAME,
 	CASE
         WHEN LEFT(SO.SALES_OFFICE, 2) IN ('85','87') THEN SO.SALES_OFFICE
-        WHEN LEFT(SO.SALES_OFFICE, 2) = '90'
-             AND A.SALES_OFFICE IS NOT NULL THEN A.SALES_OFFICE
+        WHEN A.SALES_OFFICE IS NOT NULL THEN A.SALES_OFFICE
         ELSE SO.SALES_OFFICE
     END AS FINAL_SALES_OFFICE,
 	SO.DIVISION || '-' || SO.DIVISION_DESC AS DIVISION,
@@ -146,11 +145,39 @@ SELECT
 	    ELSE 'N/A'
 	END AS SALES_ORDER_REASON_REJECTION_DESC,
 	CASE 
-		WHEN LEFT(SALES_ORDER_REASON_REJECTION_DESC, 2) IN ('Z3','ZI') THEN 'AR Related'
-		WHEN LEFT(SALES_ORDER_REASON_REJECTION_DESC, 2) IN ('Z5','Z7','Z8','Z9','ZC','ZL') THEN 'Customer Related'
-	    WHEN LEFT(SALES_ORDER_REASON_REJECTION_DESC, 2) IN ('ZA','ZD','ZG','ZN','ZP') THEN 'Delivery Related'
-	    WHEN LEFT(SALES_ORDER_REASON_REJECTION_DESC, 2) IN ('Z2','Z6','ZB','ZE','ZF','ZH','ZJ','ZK','ZM','ZQ') THEN 'Order Related'
-	    WHEN LEFT(SALES_ORDER_REASON_REJECTION_DESC, 2) IN ('Z1','Z4','ZO') THEN 'Stock Related'
+        WHEN SALES_ORDER_REASON_REJECTION_DESC IN (
+            'Z3 Kredit limit',
+            'ZI Faktur Overdue'
+        ) THEN 'AR Related'
+        WHEN SALES_ORDER_REASON_REJECTION_DESC IN (
+            'ZA Barang tidak di loading',
+            'ZN Tolakan POD qty ganjil (sistem SAP)',
+            'ZP Susut (Interco/Fresh)',
+            '(CIOSHFPJFS) Selisih loading',
+            '(CIOSHFPJFS) Full Retur Cons',
+            'ZP Susut (Interco/Fresh)'
+        ) THEN 'Delivery Related'
+        WHEN SALES_ORDER_REASON_REJECTION_DESC IN (
+            'Z2 Order kurang dari minimal order',
+            'Z6 SO Expired (retur)',
+            'ZH Selisih Harga',
+            'ZJ PO Defisit',
+            'ZK PO Double',
+            'ZM Selisih Diskon',
+            'ZQ Kesalahan Administrasi/Sales',
+            '(CIOSHFPJFS) Cancel SO',
+            'AF Wrong input the item',
+            'AK Double PO',
+            'ZF SD Salah input barang',
+            'A6 Old Sales Order'
+        ) THEN 'Order Related'
+        WHEN SALES_ORDER_REASON_REJECTION_DESC IN (
+            'Z1 Stock tidak ada',
+            'Z4 Stock tidak mencukupi',
+            'ZO Produk Mendekati Expired',
+            '(CIOSHFPJFS) Stock tidak ada',
+            'A4 Stock is insufficient'
+        ) THEN 'Stock Related'
 	    WHEN SALES_ORDER_REASON_REJECTION_DESC IS NULL OR SALES_ORDER_REASON_REJECTION_DESC = '' THEN 'N/A'
 	    ELSE 'N/A'
 	END AS SALES_ORDER_REASON_REJECTION_GROUP,
@@ -649,13 +676,10 @@ LEFT JOIN (SELECT DISTINCT SOURCE_SYSTEM, REGION, REGION_DESCRIPTION,COUNTRY FRO
     ON DSR.SOURCE_SYSTEM = CUST.SOURCE_SYSTEM
     AND DSR.REGION = CUST.REGION
     AND DSR.COUNTRY = CUST.COUNTRY
-LEFT JOIN (SELECT SOURCE_SYSTEM,CUSTOMER,SALES_OFFICE,SALES_OFFICE_DESC,ROW_NUMBER() OVER (PARTITION BY CUSTOMER ORDER BY
-                CASE
-                    WHEN SALES_OFFICE IS NOT NULL AND SALES_OFFICE <> '9001' THEN 1
-                    ELSE 2
-                END) AS rn 
+LEFT JOIN (SELECT SOURCE_SYSTEM,CUSTOMER,SALES_OFFICE,SALES_OFFICE_DESC,
+                ROW_NUMBER() OVER (PARTITION BY CUSTOMER ORDER BY SALES_OFFICE ASC) AS rn 
         	FROM D_SALES_CUSTOMER
-   			WHERE BLOCK_FOR_SALES = 'Non block' AND DELETION_FOR_SALES = 'Non delete' AND SOURCE_SYSTEM = 'PE1' AND LEFT(SALES_OFFICE,2) NOT IN ('85','87') AND SALES_OFFICE <> '9001') A
+   			WHERE BLOCK_FOR_SALES = 'Non block' AND DELETION_FOR_SALES = 'Non delete' AND SOURCE_SYSTEM = 'PE1' AND LEFT(SALES_OFFICE,2) NOT IN ('85','87') AND SALES_OFFICE NOT IN ('9001','90HA')) A
 	ON A.SOURCE_SYSTEM = SO.SOURCE_SYSTEM
 	AND A.CUSTOMER = SO.CUSTOMER 	
 	AND A.RN=1
@@ -694,6 +718,8 @@ LEFT JOIN (SELECT DISTINCT SOURCE_SYSTEM, COMPANY_CODE, SALES_OFFICE, SALES_OFFI
 	AND SA.COMPANY_CODE = LEFT(A.COMPANY,4)
 	AND SA.SALES_OFFICE = A.FINAL_SALES_OFFICE
 WHERE 
-	A.SO_CREATED_DATE BETWEEN '2026-02-01' AND '2026-02-21'
+	A.SO_CREATED_DATE BETWEEN '2026-06-01' AND '2026-06-14'
 	AND A.CATEGORY = 'Non Interco'
+	--AND SO_NUMBER IN ('1208327389','1208327391')
+	-- AND SALES_OFFICE_GROUP NOT IN ('B2B','B2B VAM')
 ;
