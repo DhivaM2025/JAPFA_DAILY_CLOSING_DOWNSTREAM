@@ -160,11 +160,15 @@ SELECT
         WHEN SALES_ORDER_REASON_REJECTION_DESC IN (
             'Z2 Order kurang dari minimal order',
             'Z6 SO Expired (retur)',
+            'Z6 SO Retur Expired',
             'ZH Selisih Harga',
             'ZJ PO Defisit',
             'ZK PO Double',
             'ZM Selisih Diskon',
-            'ZQ Kesalahan Administrasi/Sales',
+            'ZQ Permintaan Sales',
+            'ZR SO lebih dari 3 hari',
+            'ZS Permintaan Customer',
+            'ZT PO Expired' ,
             '(CIOSHFPJFS) Cancel SO',
             'AF Wrong input the item',
             'AK Double PO',
@@ -175,6 +179,8 @@ SELECT
             'Z1 Stock tidak ada',
             'Z4 Stock tidak mencukupi',
             'ZO Produk Mendekati Expired',
+            'ZU Product Discontinued',  
+            'ZV Product Expired',
             '(CIOSHFPJFS) Stock tidak ada',
             'A4 Stock is insufficient'
         ) THEN 'Stock Related'
@@ -718,7 +724,7 @@ LEFT JOIN (SELECT DISTINCT SOURCE_SYSTEM, COMPANY_CODE, SALES_OFFICE, SALES_OFFI
 	AND SA.COMPANY_CODE = LEFT(A.COMPANY,4)
 	AND SA.SALES_OFFICE = A.FINAL_SALES_OFFICE
 WHERE 
-	A.SO_CREATED_DATE BETWEEN '2026-06-01' AND '2026-06-14'
+	A.SO_CREATED_DATE BETWEEN '2026-08-01' AND '2026-08-09'
 	AND A.CATEGORY = 'Non Interco'
 	--AND SO_NUMBER IN ('1208327389','1208327391')
 	-- AND SALES_OFFICE_GROUP NOT IN ('B2B','B2B VAM')
